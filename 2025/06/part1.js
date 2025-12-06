@@ -15,6 +15,7 @@ let list1 = inputSplitted[0].split(" ");
 let list2 = inputSplitted[1].split(" ");
 let list3 = inputSplitted[2].split(" ");
 let list4 = inputSplitted[3].split(" ");
+let list5 = inputSplitted[4].split(" ");
 
 list1 = list1.filter((el) => {
     if (el != "") return el
@@ -28,12 +29,15 @@ list3 = list3.filter((el) => {
 list4 = list4.filter((el) => {
     if (el != "") return el
 })
+list5 = list5.filter((el) => {
+    if (el != "") return el
+})
 totals = [];
 for (let i = 0; i < list1.length; i++) {
-    if (list4[i] == "+") {
-        totals.push(Number(list1[i]) + Number(list2[i]) + Number(list3[i]))
+    if (list5[i] == "+") {
+        totals.push(Number(list1[i]) + Number(list2[i]) + Number(list3[i]) + Number(list4[i]))
     } else {
-        totals.push(Number(list1[i]) * Number(list2[i]) * Number(list3[i]))
+        totals.push(Number(list1[i]) * Number(list2[i]) * Number(list3[i]) * Number(list4[i]))
     }
 }
 total = 0;

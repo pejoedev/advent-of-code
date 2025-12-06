@@ -1,0 +1,12 @@
+{
+  "name": "advent-of-code06-12-2025",
+  "version": "1.0.0",
+  "description": "https://adventofcode.com/2025/day/6",
+  "main": "index.js",
+  "scripts": {
+    "1": "node part1.js",
+    "2": "node part2.js"
+  },
+  "author": "",
+  "license": "ISC"
+}

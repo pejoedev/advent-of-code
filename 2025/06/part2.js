@@ -42,25 +42,40 @@ console.log(list1)
 console.log(list2)
 console.log(list3)
 console.log(list4)
-// totals = [];
-// for (let i = 0; i < list1.length; i++) {
-//     let sumLength = Math.max(list1[i].length, list2[i].length, list3[i].length)
-//     numbers = []
-//     for (let j = 0; j < sumLength; j++) {
-//         let number = getAtLocation(list1[i], j) + getAtLocation(list2[i], j) + getAtLocation(list3[i], j)
-//         numbers.push(number)
-//     }
-//     console.log(numbers)
+totals = [];
+for (let i = 0; i < list1.length; i++) {
+    let sumLength = Math.max(list1[i].length, list2[i].length, list3[i].length)
+    numbers = []
+    for (let j = 0; j < sumLength; j++) {
+        let number = getAtLocation(list1[i], j) + getAtLocation(list2[i], j) + getAtLocation(list3[i], j)
+        numbers.push(number)
+    }
+    console.log(numbers)
+    let num = []
+    numbers.forEach((el) => {
+        if (el == '') return;
+        num.push(Number(el))
+    })
+    let char = list4[i].replaceAll(" ", "");
+    console.log(num)
+    if (char == "+") {
+        totals.push(num[0] + num[1] + num[2])
+    } else if (char == "*") {
+        totals.push(num[0] * num[1] * num[2])
+    } else {
+        console.log("error: ", char)
+    }
+}
 
-// }
-// total = 0;
-// totals.forEach(element => {
-//     total += element
-// });
+total = 0;
+totals.forEach(element => {
+    total += element
+});
 
-// function getAtLocation(listItem, location) {
-//     if (listItem.length <= location) return ''
-//     return listItem[location]
-// }
+function getAtLocation(listItem, location) {
+    if (listItem.length <= location) return ''
+    if (listItem[location] == " ") return ''
+    return listItem[location]
+}
 
-// console.log(total)
+console.log(total)

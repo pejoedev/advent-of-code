@@ -2,7 +2,7 @@
 def pretty_print_2d(arr):
     print("[")
     for row in arr:
-        nums = [1 if x else 0 for x in row]
+        nums = ['|' if x else '.' for x in row]
         print("  [" + ",".join(str(n) for n in nums) + "],")
     print("]")
 

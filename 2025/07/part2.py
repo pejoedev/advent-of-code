@@ -1,3 +1,5 @@
+from copy import deepcopy
+
 # helper for visualisation
 def pretty_print_2d(arr):
     print("[")
@@ -29,7 +31,7 @@ maxWidth = len(input_lines[0])
 print(maxWidth)
 endings = 0
 
-def runState(ground_truth, index):
+def runState(ground_truth, tree, index):
     global endings
     # print(index, ground_truth)
     current1 = []
@@ -56,14 +58,24 @@ def runState(ground_truth, index):
 
     if index + 1 == len(input_lines):
         endings += 1
+        newTree = deepcopy(tree)
+        newTree.append(current1)
+        print(f"-------------{endings}--------------")
+        pretty_print_2d(newTree)
         return
     if ",".join(str(b) for b in current1) == ",".join(str(b) for b in current2):
-        runState(current1, index+1)
+        newTree = deepcopy(tree)
+        newTree.append(current1)
+        runState(current1, newTree, index+1)
     else:
-        runState(current1, index+1)
-        runState(current2, index+1)
+        newTree1 = deepcopy(tree)
+        newTree2 = deepcopy(tree)
+        newTree1.append(current1)
+        newTree2.append(current2)
+        runState(current1, newTree1, index+1)
+        runState(current2, newTree2, index+1)
 
 last = [c == "S" for c in input_lines[0]]
-runState(last, 0)
+runState(last, [], 0)
 
 print(endings)

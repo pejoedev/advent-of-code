@@ -27,30 +27,43 @@ print(input_lines)
 print(f"\nNumber of lines: {len(input_lines)}")
 maxWidth = len(input_lines[0])
 print(maxWidth)
-splits = 0
+endings = 0
 
-last = [c == "S" for c in input_lines[0]]
-tree = []
-for i in range(len(input_lines)):
-    print("loop ", i)
-    current = []
+def runState(ground_truth, index):
+    global endings
+    # print(index, ground_truth)
+    current1 = []
+    current2 = []
     ignoreIf = -1
     for j in range(maxWidth):
-        if ignoreIf == j: continue
-        if last[j]:
-            if input_lines[i][j] == "^":
+        if ground_truth[j]:
+            if input_lines[index][j] == "^":
                 ignoreIf = j+1
-                current.pop()
-                current.append(True)
-                current.append(False)
-                current.append(True)
-                splits+=1
+                current1.pop()
+                current1.append(True)
+                current1.append(False)
+                if ignoreIf == j: continue
+                current2.append(False)
+                current2.append(True)
             else:
-                current.append(True)
+                current1.append(True)
+                if ignoreIf == j: continue
+                current2.append(True)
         else:
-            current.append(False)
-    last = current
-    tree.append(last)
+            current1.append(False)
+            if ignoreIf == j: continue
+            current2.append(False)
 
-pretty_print_2d(tree)
-print(splits)
+    if index + 1 == len(input_lines):
+        endings += 1
+        return
+    if ",".join(str(b) for b in current1) == ",".join(str(b) for b in current2):
+        runState(current1, index+1)
+    else:
+        runState(current1, index+1)
+        runState(current2, index+1)
+
+last = [c == "S" for c in input_lines[0]]
+runState(last, 0)
+
+print(endings)

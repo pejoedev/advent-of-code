@@ -1,72 +1,84 @@
-from copy import deepcopy
-
-# helper for visualisation
-def pretty_print_2d(arr):
-    print("[")
-    for row in arr:
-        nums = ['|' if x else '.' for x in row]
-        print("  [" + ",".join(str(n) for n in nums) + "],")
-    print("]")
-
-
-# Read input.txt into a variable
-with open('input.txt', 'r') as file:
-    input_data = file.read()
-
-# Alternative: Read as a list of lines (without newline characters)
+# Read input once and store efficiently
 with open('input.txt', 'r') as file:
     input_lines = file.read().strip().split('\n')
 
-# Alternative: Read as a list of lines (keeping newline characters)
-with open('input.txt', 'r') as file:
-    input_lines_with_newlines = file.readlines()
-
-# Print to verify the data was loaded
-print("Raw input data:")
-print(repr(input_data))
-print("\nAs list of lines:")
-print(input_lines)
-print(f"\nNumber of lines: {len(input_lines)}")
 maxWidth = len(input_lines[0])
-print(maxWidth)
 endings = 0
 
+# Pre-allocate reusable arrays to avoid creating new ones each call
+temp_state1 = [False] * maxWidth
+temp_state2 = [False] * maxWidth
+
+def states_equal(state1, state2, length):
+    """Compare states without string conversion"""
+    for i in range(length):
+        if state1[i] != state2[i]:
+            return False
+    return True
+
+def copy_state(source, dest, length):
+    """Copy state efficiently"""
+    for i in range(length):
+        dest[i] = source[i]
+
 def runState(ground_truth, index):
-    global endings
-    # print(index, ground_truth)
-    current1 = []
-    current2 = []
+    global endings, temp_state1, temp_state2
+    
+    # Reset temp arrays
+    current1_len = 0
+    current2_len = 0
     ignoreIf = -1
+    
+    # Build states in-place
     for j in range(maxWidth):
         if ground_truth[j]:
             if input_lines[index][j] == "^":
                 ignoreIf = j+1
-                current1.pop()
-                current1.append(True)
-                current1.append(False)
-                if ignoreIf == j: continue
-                current2.append(False)
-                current2.append(True)
+                if current1_len > 0:
+                    current1_len -= 1
+                temp_state1[current1_len] = True
+                current1_len += 1
+                temp_state1[current1_len] = False
+                current1_len += 1
+                
+                if ignoreIf != j:
+                    temp_state2[current2_len] = False
+                    current2_len += 1
+                    temp_state2[current2_len] = True
+                    current2_len += 1
             else:
-                current1.append(True)
-                if ignoreIf == j: continue
-                current2.append(True)
+                temp_state1[current1_len] = True
+                current1_len += 1
+                if ignoreIf != j:
+                    temp_state2[current2_len] = True
+                    current2_len += 1
         else:
-            current1.append(False)
-            if ignoreIf == j: continue
-            current2.append(False)
+            temp_state1[current1_len] = False
+            current1_len += 1
+            if ignoreIf != j:
+                temp_state2[current2_len] = False
+                current2_len += 1
 
     if index + 1 == len(input_lines):
         endings += 1
-        print(f"-------------{endings}--------------")
+        if endings % 1000 == 0:  # Less frequent printing
+            print(f"Found {endings} endings...")
         return
-    if ",".join(str(b) for b in current1) == ",".join(str(b) for b in current2):
-        runState(current1, index+1)
+    
+    # Compare without string conversion
+    if current1_len == current2_len and states_equal(temp_state1, temp_state2, current1_len):
+        runState(temp_state1[:current1_len], index+1)
     else:
-        runState(current1, index+1)
-        runState(current2, index+1)
+        # Make copies only when needed
+        state1_copy = temp_state1[:current1_len]
+        state2_copy = temp_state2[:current2_len] if current2_len > 0 else []
+        
+        runState(state1_copy, index+1)
+        if current2_len > 0:
+            runState(state2_copy, index+1)
 
-last = [c == "S" for c in input_lines[0]]
-runState(last, 0)
+# Initialize with starting state
+initial_state = [c == "S" for c in input_lines[0]]
+runState(initial_state, 0)
 
-print(endings)
+print(f"Total endings: {endings}")

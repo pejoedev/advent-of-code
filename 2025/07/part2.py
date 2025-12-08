@@ -61,7 +61,7 @@ def runState(ground_truth, index):
 
     if index + 1 == len(input_lines):
         endings += 1
-        if endings % 1000 == 0:  # Less frequent printing
+        if endings % 100000 == 0:  # Less frequent printing
             print(f"Found {endings} endings...")
         return
     
